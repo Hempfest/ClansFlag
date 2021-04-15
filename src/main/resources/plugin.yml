@@ -1,5 +1,5 @@
 name: ClansFlag
-version: 1.0
+version: 1.1
 main: com.youtube.hempfest.clansflag.ClansFlag
 api-version: 1.13
 depend: [ WorldGuard ]

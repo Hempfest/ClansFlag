@@ -1,5 +1,7 @@
 package com.youtube.hempfest.clansflag;
 
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.youtube.hempfest.clans.util.events.clans.LandPreClaimEvent;
 import com.youtube.hempfest.clans.util.events.clans.LandUnClaimEvent;
 import org.bukkit.Bukkit;
@@ -11,21 +13,21 @@ public final class ClansFlag extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
-		// Plugin startup logic
 		if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-			com.sk89q.worldguard.WorldGuard worldGuard = com.sk89q.worldguard.WorldGuard.getInstance();
-			if (!worldGuard.getPlatform().getSessionManager().registerHandler(ClanHandler.factory, null)) {
+			WorldGuard worldGuard = WorldGuard.getInstance();
+			if (!worldGuard.getPlatform().getSessionManager().registerHandler(IWGClaimCheck.factory, null)) {
 				getLogger().severe("- Could not register the WG handler !");
 				getServer().getPluginManager().disablePlugin(this);
 			}
 		}
+		getServer().getPluginManager().registerEvents(this, this);
 	}
 
 	@Override
 	public void onLoad() {
-			com.sk89q.worldguard.WorldGuard worldGuard = com.sk89q.worldguard.WorldGuard.getInstance();
-			com.sk89q.worldguard.protection.flags.registry.FlagRegistry flagRegistry = worldGuard.getFlagRegistry();
-			flagRegistry.register(ClanHandler.CAN_CLAIM = new com.sk89q.worldguard.protection.flags.StateFlag("claim-land", false));
+			WorldGuard worldGuard = WorldGuard.getInstance();
+			FlagRegistry flagRegistry = worldGuard.getFlagRegistry();
+			flagRegistry.register(IWGClaimCheck.CAN_CLAIM = new com.sk89q.worldguard.protection.flags.StateFlag("claim-land", false));
 	}
 
 	@Override
@@ -36,7 +38,7 @@ public final class ClansFlag extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onLandPreClaim(LandPreClaimEvent e) {
 		if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-			if (!ClanHandler.canClaim(e.getClaimer())) {
+			if (IWGClaimCheck.flagged(e.getClaimer())) {
 				e.getUtil().sendMessage(e.getClaimer(), e.getUtil().notClaimOwner("&6&oWorldGuard"));
 				e.setCancelled(true);
 			}
@@ -46,7 +48,7 @@ public final class ClansFlag extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onLandUnClaim(LandUnClaimEvent e) {
 		if (Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-			if (!ClanHandler.canClaim(e.getRemover())) {
+			if (IWGClaimCheck.flagged(e.getRemover())) {
 				e.getUtil().sendMessage(e.getRemover(), e.getUtil().notClaimOwner("&6&oWorldGuard"));
 				e.setCancelled(true);
 			}
