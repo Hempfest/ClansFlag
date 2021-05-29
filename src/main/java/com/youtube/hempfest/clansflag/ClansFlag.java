@@ -1,9 +1,9 @@
 package com.youtube.hempfest.clansflag;
 
+import com.github.sanctum.clans.util.events.clans.LandPreClaimEvent;
+import com.github.sanctum.clans.util.events.clans.LandUnClaimEvent;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
-import com.youtube.hempfest.clans.util.events.clans.LandPreClaimEvent;
-import com.youtube.hempfest.clans.util.events.clans.LandUnClaimEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
